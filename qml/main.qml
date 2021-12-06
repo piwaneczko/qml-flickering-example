@@ -8,6 +8,7 @@ ApplicationWindow {
     height: 300
     width: 300
     visible: true
+    flags: Qt.FramelessWindowHint
     x: Screen.width - width
 
     Material.theme: Material.Dark
@@ -17,15 +18,22 @@ ApplicationWindow {
         easing.type: Easing.InOutQuad
     }
 
-    Button { 
-        id: toogleButton
-        anchors.centerIn: parent
-        enabled: !animation.running
-        text: width == 300 ? 'Size up' : 'Size down'
-        onClicked: { 
-            animation.from = width
-            animation.to = width == 300 ? 600 : 300
-            animation.start()
+    property var lowerSize: true
+
+    Rectangle {
+        anchors.fill: parent
+        
+        Button { 
+            anchors.centerIn: parent
+            
+            enabled: !animation.running
+            text: lowerSize ? 'Size up' : 'Size down'
+            onClicked: { 
+                animation.from = lowerSize ? 300 : 600
+                animation.to = lowerSize ? 600 : 300
+                animation.start()
+                lowerSize = !lowerSize
+            }
         }
     }
 }
