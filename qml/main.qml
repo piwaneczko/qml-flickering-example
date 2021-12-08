@@ -9,16 +9,32 @@ ApplicationWindow {
     width: 300
     visible: true
     flags: Qt.FramelessWindowHint
-    x: Screen.width - width
 
-    Material.theme: Material.Dark
-    
-    NumberAnimation on width {
-        id: animation
-        easing.type: Easing.InOutQuad
+    Component.onCompleted: {
+        x = Screen.width - width;
+        y = 0;
     }
 
-    property var lowerSize: true
+    Material.theme: Material.Dark
+
+    ParallelAnimation {
+        id: animation
+
+        NumberAnimation {
+            id: widthAnimation
+            target: root
+            property: "width"
+            easing.type: Easing.InOutQuad
+        }
+        NumberAnimation {
+            id: xAnimation
+            target: root
+            property: "x"
+            easing.type: Easing.InOutQuad
+        }
+    }
+
+    property bool lowerSize: true
 
     Rectangle {
         anchors.fill: parent
@@ -29,8 +45,12 @@ ApplicationWindow {
             enabled: !animation.running
             text: lowerSize ? 'Size up' : 'Size down'
             onClicked: { 
-                animation.from = lowerSize ? 300 : 600
-                animation.to = lowerSize ? 600 : 300
+                widthAnimation.from = lowerSize ? 300 : 600
+                widthAnimation.to = lowerSize ? 600 : 300
+
+                xAnimation.from = lowerSize ? Screen.width - 300 : Screen.width - 600
+                xAnimation.to = lowerSize ? Screen.width - 600 : Screen.width - 300
+
                 animation.start()
                 lowerSize = !lowerSize
             }
